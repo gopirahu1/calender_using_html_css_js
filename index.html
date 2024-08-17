@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #f8f9fa, #e2e2e2);
+        }
+        #calendar {
+            border: 2px solid #007bff;
+            border-radius: 10px;
+            background-color: #ffffff;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .header {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            color: #007bff;
+        }
+        .controls {
+            margin-bottom: 10px;
+        }
+        .controls button {
+            font-size: 1.5em;
+            padding: 10px 15px;
+            cursor: pointer;
+            border: 2px solid #007bff;
+            background-color: #007bff;
+            color: white;
+            border-radius: 50%;
+            transition: background-color 0.3s, transform 0.3s;
+            outline: none;
+        }
+        .controls button:hover {
+            background-color: #0056b3;
+            transform: scale(1.1);
+        }
+        .controls .fa {
+            margin: 0;
+        }
+        .days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        .day, .date {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+            border-radius: 5px;
+        }
+        .day {
+            font-weight: bold;
+            background-color: #f8f9fa;
+            color: #495057;
+        }
+        .date {
+            cursor: pointer;
+            background-color: #ffffff;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .date:hover {
+            background-color: #007bff;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+<div id="calendar">
+    <div class="controls">
+        <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+        <span id="monthYear" class="header"></span>
+        <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+    </div>
+    <div class="days" id="daysOfWeek"></div>
+    <div class="days" id="dates"></div>
+</div>
+
+<script>
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
+
+    function generateCalendar(month, year) {
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        
+        // Update header
+        document.getElementById('monthYear').textContent = `${firstDay.toLocaleString('default', { month: 'long' })} ${year}`;
+        
+        // Update days of the week
+        const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const daysOfWeekElement = document.getElementById('daysOfWeek');
+        daysOfWeekElement.innerHTML = daysOfWeek.map(day => `<div class="day">${day}</div>`).join('');
+        
+        // Update dates
+        const datesElement = document.getElementById('dates');
+        datesElement.innerHTML = '';
+        
+        // Fill empty spaces before the first day
+        for (let i = 0; i < firstDay.getDay(); i++) {
+            datesElement.innerHTML += '<div class="date"></div>';
+        }
+        
+        // Fill in the dates
+        for (let i = 1; i <= lastDay.getDate(); i++) {
+            datesElement.innerHTML += `<div class="date">${i}</div>`;
+        }
+    }
+
+    function updateMonth(direction) {
+        if (direction === 'next') {
+            if (currentMonth === 11) {
+                currentMonth = 0;
+                currentYear++;
+            } else {
+                currentMonth++;
+            }
+        } else if (direction === 'prev') {
+            if (currentMonth === 0) {
+                currentMonth = 11;
+                currentYear--;
+            } else {
+                currentMonth--;
+            }
+        }
+        generateCalendar(currentMonth, currentYear);
+    }
+
+    document.getElementById('nextMonth').addEventListener('click', () => updateMonth('next'));
+    document.getElementById('prevMonth').addEventListener('click', () => updateMonth('prev'));
+
+    // Generate the initial calendar
+    generateCalendar(currentMonth, currentYear);
+</script>
+
+</body>
+</html>
